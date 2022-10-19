@@ -15,7 +15,7 @@ const render = Render.create({
     element: document.body,
     engine: engine,
     options: {
-        wireframes: true,
+        wireframes: false,
         width,
         height
     }
@@ -137,7 +137,10 @@ horizontals.forEach((row, rowIndex) => {
             5,
             {
                 label: 'wall',
-                isStatic: true
+                isStatic: true,
+                render: {
+                    fillStyle: 'blue'
+                }
             }
         );
         World.add(world, wall);
@@ -162,7 +165,10 @@ verticals.forEach((row, rowIndex) => {
             unitLengthY,
             {
                 label: 'wall',
-                isStatic: true
+                isStatic: true,
+                render: {
+                    fillStyle: 'blue'
+                }
             }
         );
         World.add(world, wall);
@@ -181,14 +187,17 @@ const goal = Bodies.rectangle(
     unitLengthY * .7,
     {
         label: 'goal',
-        isStatic: true
+        isStatic: true,
+        render: {
+            fillStyle: 'green'
+        }
     }
 );
 World.add(world, goal);
 
+// ball that scales with size of maze
 // ball radius
 const ballRadius = Math.min(unitLengthX, unitLengthY) / 4;
-// ball that scales with size of maze
 const ball = Bodies.circle(
     // x cooordinate
     unitLengthX / 2,
@@ -197,7 +206,10 @@ const ball = Bodies.circle(
     // radius of ball
     ballRadius,
     {
-        label: 'ball'
+        label: 'ball',
+        render: {
+            fillStyle: 'grey'
+        }
     }
 );
 World.add(world, ball);

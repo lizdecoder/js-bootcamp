@@ -163,6 +163,7 @@ verticals.forEach((row, rowIndex) => {
     });
 });
 
+// goal that scales with size of maze
 const goal = Bodies.rectangle(
     // x-coordinate to center
     width - unitLength /2,
@@ -177,3 +178,17 @@ const goal = Bodies.rectangle(
     }
 );
 World.add(world, goal);
+
+// ball that scales with size of maze
+const ball = Bodies.circle(
+    // x cooordinate
+    unitLength / 2,
+    // y coordinate
+    unitLength / 2,
+    // radius of ball
+    unitLength / 4,
+    {
+        isStatic: true
+    }
+);
+World.add(world, ball);

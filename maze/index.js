@@ -1,4 +1,4 @@
-const { Engine, Render, Runner, World, Bodies, Body } = Matter;
+const { Engine, Render, Runner, World, Bodies, Body, Events } = Matter;
 
 const cells = 3;
 const width = 600;
@@ -22,7 +22,7 @@ const render = Render.create({
 Render.run(render);
 Runner.run(Runner.create(), engine);
 
-// Walls
+// borders
 const walls = [
     // top
     Bodies.rectangle(width / 2, 0, width, 2, { isStatic: true }),
@@ -133,6 +133,7 @@ horizontals.forEach((row, rowIndex) => {
             // height of rectangle
             10,
             {
+                label: 'wall',
                 isStatic: true
             }
         );
@@ -157,6 +158,7 @@ verticals.forEach((row, rowIndex) => {
             // height of rectangle
             unitLength,
             {
+                label: 'wall',
                 isStatic: true
             }
         );
@@ -175,6 +177,7 @@ const goal = Bodies.rectangle(
     // height of rectangle
     unitLength * .7,
     {
+        label: 'goal',
         isStatic: true
     }
 );
@@ -188,13 +191,15 @@ const ball = Bodies.circle(
     unitLength / 2,
     // radius of ball
     unitLength / 4,
+    {
+        label: 'ball'
+    }
 );
 World.add(world, ball);
 
 // eventlistener for keypresses to move ball
 document.addEventListener('keydown', event => {
     const { x, y } = ball.velocity;
-    console.log(x, y);
     if (event.key === 'w') {
         Body.setVelocity(ball, { x, y: y - 5 });
     }
@@ -207,4 +212,20 @@ document.addEventListener('keydown', event => {
     if (event.key === 'a') {
         Body.setVelocity(ball, { x: x - 5, y });
     }
+});
+
+// Win condition: shapes collided with each other
+Events.on(engine, 'collisionStart', event => {
+    event.pairs.forEach((collision) => {
+        const labels = ['ball', 'goal'];
+
+        if (labels.includes(collision.bodyA.label) && labels.includes(collision.bodyB.label)) {
+            world.gravity.y = 1;
+            world.bodies.forEach(body => {
+                if (body.label === 'wall') {
+                    Body.setStatic(body, false);
+                }
+            });
+        }
+    });
 });

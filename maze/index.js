@@ -34,6 +34,20 @@ World.add(world, walls);
     
 // Maze generation
 
+// randomize array
+const shuffle = (arr) => {
+    let counter = arr.length;
+    
+    while (counter > 0) {
+        const index = Math.floor(Math.random() * counter);
+        counter--;
+        const temp = arr[counter];
+        arr[counter] = arr[index];
+        arr[index] = temp;
+   }
+   return arr; 
+}
+
 // one attempt for grid
 // const grid = [];
 // for (let i = 0; i < 3; i++) {
@@ -54,20 +68,47 @@ const startColumn = Math.floor(Math.random() * cells);
 
 const stepThroughCell = (row, column) => {
     // If I have visited the cell at [row, column], then return
-
+    if (grid[row][column]) {
+        return;
+    }
     // Mark this cell as being visited
-
-    // Assemble randomly-ordered list of neightbors
-
-    // for each neightbor...
-
-    // see if that neightbor is out of bounds
-
-    // if we have visited that neightbor, continue to next neightbor
-
-    // remove a wall from either the horizontals or verticals array
+    grid[row][column] = true;
     
-    // visit that next cell
+    // Assemble randomly-ordered list of neighbors
+    // Uses shuffle function to randomize
+    const neighbors = shuffle([
+        // adding third element as a flag for direction
+        [row - 1, column, 'up'],
+        [row, column + 1, 'right'],
+        [row + 1, column, 'down'],
+        [row, column - 1, 'left']
+    ]);
+    
+    // for each neighbor...
+    for (let neighbor of neighbors) {
+        // destructuring next row and next column from neighbor
+        const [nextRow, nextColumn, direction] = neighbor;
+        // see if that neighbor is out of bounds
+        if (nextRow < 0 || nextRow >= cells || nextColumn < 0 || nextColumn >= cells) {
+            continue;
+        }
+        // if we have visited that neighbor, continue to next neightbor
+        if (grid[nextRow][nextColumn]) {
+            continue;
+        }
+        // remove a wall from either the horizontals or verticals array
+        if (direction === 'left') {
+            verticals[row][column-1] = true;
+        } else if (direction === 'right') {
+            verticals[row][column] = true;
+        } else if (direction === 'up') {
+            horizontals[row-1][column] = true;
+        } else if (direction === 'down') {
+            horizontals[row][column] = true;
+        }
+        // visit that next cell
+        stepThroughCell(nextRow, nextColumn);
+    }
 };
 
 stepThroughCell(startRow, startColumn);

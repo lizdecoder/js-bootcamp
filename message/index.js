@@ -1,3 +1,6 @@
+// deployed through Now service
+// deployment link: https://message-nu-ten.vercel.app
+
 const { hash } = window.location;
 const message = atob(hash.replace('#', ''));
 

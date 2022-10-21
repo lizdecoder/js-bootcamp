@@ -1,3 +1,5 @@
+#!/usr/bin/env node 
+
 //fs = file system
 const fs = require('fs');
 

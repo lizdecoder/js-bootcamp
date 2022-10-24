@@ -55,13 +55,27 @@ fs.readdir(process.cwd(), async (err, filenames) => {
     // }
 
     // GOOD CODE HERE: Option #2 with async & promise
-    for (let filename of filenames) {
-        try {
-        const stats = await lstat(filename);
-        console.log(filename, stats.isFile());
-        } catch (err) {
-            console.log(err);
-        }
+    // implementation is not ideal - only one lstat operation at a time
+    // not performant, never in parallel
+    // for (let filename of filenames) {
+    //     try {
+    //     const stats = await lstat(filename);
+    //     console.log(filename, stats.isFile());
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
+
+    // GREAT CODE HERE: Option #3 - processes many lstat ops in parallel
+    const statPromises = filenames.map(filename => {
+        return lstat(filename);
+    });
+    // all lstat ops in parallel
+    const allStats = await Promise.all(statPromises);
+
+    for (let stats of allStats) {
+        const index = allStats.indexOf(stats);
+        console.log(filenames[index], stats.isFile());
     }
 });
 

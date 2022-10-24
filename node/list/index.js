@@ -13,5 +13,14 @@ fs.readdir(process.cwd(), (err, filenames) => {
         // console log requires return to not run error
         // throw new Error(err); more ideal
     }
-    console.log(filenames);
+    // BAD CODE HERE for learning purposes
+    for (let filename of filenames) {
+        fs.lstat(filename, (err, stats) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(filename, stats.isFile());
+        });
+    }
+    // BAD CODE COMPLETE
 });

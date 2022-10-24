@@ -82,9 +82,9 @@ fs.readdir(targetDir, async (err, filenames) => {
 
         if (stats.isFile()) {
             console.log(filenames[index])
-        }
+        }else {
         console.log(chalk.bold(filenames[index]));
-        // console.log(filenames[index]);
+        }
     }
 });
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env node 
 
 //fs = file system
+const chalk = require('chalk')
 const fs = require('fs');
+const path = require('path');
 
 // method #2 lstat with promise
 // const util = require('util');
@@ -10,9 +12,11 @@ const fs = require('fs');
 // method #3 BEST - uses promise-based function
 const { lstat } = fs.promises;
 
+const targetDir = process.argv[2] || process.cwd();
+
 // using process.cwd for current work directory instead of "." to be
 // compatible with other OS
-fs.readdir(process.cwd(), async (err, filenames) => {
+fs.readdir(targetDir, async (err, filenames) => {
     // either err === an error object, or err === null everything is okay
     if (err) {
         // error handling code here
@@ -68,14 +72,19 @@ fs.readdir(process.cwd(), async (err, filenames) => {
 
     // GREAT CODE HERE: Option #3 - processes many lstat ops in parallel
     const statPromises = filenames.map(filename => {
-        return lstat(filename);
+        return lstat(path.join(targetDir, filename));
     });
     // all lstat ops in parallel
     const allStats = await Promise.all(statPromises);
 
     for (let stats of allStats) {
         const index = allStats.indexOf(stats);
-        console.log(filenames[index], stats.isFile());
+
+        if (stats.isFile()) {
+            console.log(filenames[index])
+        }
+        console.log(chalk.bold(filenames[index]));
+        // console.log(filenames[index]);
     }
 });
 

@@ -4,8 +4,11 @@ const debounce = require('lodash.debounce');
 const chokidar = require('chokidar');
 const program = require('caporal');
 const fs = require('fs');
+// child processes allows to open another program from current program
+const { spawn } = require('child_process');
 
 program.version('0.0.1')
+    // [] means optional
     .argument('[filename]', 'Name of a file to execute')
     .action(async ({ filename }) => {
         const name = filename || 'index.js';
@@ -17,7 +20,7 @@ program.version('0.0.1')
         }
 
         const start = debounce(() => {
-            console.log('STARTING USERS PROGRAM');
+            spawn('node', [name], { stdio: 'inherit'});
         }, 100);
         
         chokidar.watch('.')

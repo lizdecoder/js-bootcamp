@@ -4,6 +4,7 @@ const debounce = require('lodash.debounce');
 const chokidar = require('chokidar');
 const program = require('caporal');
 const fs = require('fs');
+const chalk = require('chalk');
 // child processes allows to open another program from current program
 const { spawn } = require('child_process');
 
@@ -19,8 +20,14 @@ program.version('0.0.1')
             throw new Error(`Could not find the file ${name}`);
         }
 
+        let proc;
         const start = debounce(() => {
-            spawn('node', [name], { stdio: 'inherit'});
+            // terminate original process if there is already a process
+            if (proc){
+                proc.kill();
+            }
+            console.log(chalk.blue('>>>>> Starting process....'));
+            proc = spawn('node', [name], { stdio: 'inherit'});
         }, 100);
         
         chokidar.watch('.')

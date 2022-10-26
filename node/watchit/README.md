@@ -1,5 +1,5 @@
 # CLI Tool - Runner 
-### Applelication detects modications made to file changes and displays changes in CL
+### Application detects modications made to file changes and displays changes in CL
 ### Implements child_processes; specifically spawn function
 ### Uses multiple third party packages:
 #### 1. lodah.debounce - delay execution of progream

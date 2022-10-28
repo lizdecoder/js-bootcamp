@@ -1,3 +1,4 @@
+const { application } = require('express');
 const express = require('express');
 
 const app = express();
@@ -14,6 +15,10 @@ app.get('/', (req, res) => {
             </form>
         </div>
     `);
+});
+
+app.post('/', (req, res) => {
+    res.send('Account created!');
 });
 
 // app to start listening to network requests on specific port; i.e. 3000

@@ -18,6 +18,27 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
+    //get access to email, password, passwordConfirmation
+    // req.on is equal to addEventListener
+    req.on('data', data => {
+        // manual code to parse data from form
+        // const parsed = data.toString('utf8').split('&');
+        // const formData = {};
+        // for (let pair of parsed) {
+        //     const [key, value] = pair.split('=');
+        //     formData[key] = value;
+        // }
+        // console.log(formData);
+
+        // helper function to parse data from form
+        const parsed = data.toString('utf8').split('&');
+        const formData = {};
+        for (let pair of parsed) {
+            const [key, value] = pair.split('=');
+            formData[key] = value;
+        }
+        console.log(formData);
+    });
     res.send('Account created!');
 });
 

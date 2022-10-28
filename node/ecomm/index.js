@@ -17,11 +17,31 @@ app.get('/', (req, res) => {
     `);
 });
 
-app.post('/', (req, res) => {
+// Middleware helper function to parse data from form
+// next is a callback function that comes from express app
+const bodyParser = (req, res, next) => {
+    if (req.method === 'POST') {
+        req.on('data', data => {
+            const parsed = data.toString('utf8').split('&');
+            const formData = {};
+            for (let pair of parsed) {
+                const [key, value] = pair.split('=');
+                formData[key] = value;
+            }
+            req.body = formData;
+            next();
+        });
+    } else {
+        next();
+    }
+};
+
+// route handlers
+app.post('/', bodyParser, (req, res) => {
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
-    req.on('data', data => {
-        // manual code to parse data from form
+    // manual code to parse data from form
+    // req.on('data', data => {
         // const parsed = data.toString('utf8').split('&');
         // const formData = {};
         // for (let pair of parsed) {
@@ -30,15 +50,8 @@ app.post('/', (req, res) => {
         // }
         // console.log(formData);
 
-        // helper function to parse data from form
-        const parsed = data.toString('utf8').split('&');
-        const formData = {};
-        for (let pair of parsed) {
-            const [key, value] = pair.split('=');
-            formData[key] = value;
-        }
-        console.log(formData);
-    });
+    console.log(req.body);
+    
     res.send('Account created!');
 });
 

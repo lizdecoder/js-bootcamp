@@ -94,13 +94,27 @@ class UsersRepository {
     }
 }
 
+// Exporting methods
+// method #1: exporting full class
+// module.exports = UsersRepository;
+// requires this in another file....
+// not ideal approach
+// const UsersRepository = require('./users');
+// const repo = new UsersRepository('users.json')
+
+// method #2: exporting an instance of the class
+// can call methods immediately in another file
+// only idea because we only need one instance of this class
+module.exports = new UsersRepository('users.json');
+
+
 // test
-const test = async () => {
-    const repo = new UsersRepository('users.json');
+// const test = async () => {
+//     const repo = new UsersRepository('users.json');
 
-    const user = await repo.getOneBy({ hello: 'askdlfasl' });
-    console.log(user)
+//     const user = await repo.getOneBy({ hello: 'askdlfasl' });
+//     console.log(user)
 
-};
+// };
 
-test();
+// test();

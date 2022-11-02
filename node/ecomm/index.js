@@ -1,6 +1,7 @@
 const { application } = require('express');
 const express = require('express');
 const bodyParser = require('body-parser');
+const usersRepo = require('./repositories/users');
 
 const app = express();
 
@@ -44,7 +45,7 @@ app.get('/', (req, res) => {
 // Attempt #3 to parse data
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
     // Attempt #1 to parse data
@@ -58,7 +59,17 @@ app.post('/', (req, res) => {
         // }
         // console.log(formData);
 
-    console.log(req.body);
+    const { email, password, passwordConfirmation } = req.body;
+
+    const exisitingUser = await usersRepo.getOneBy({ email });
+    if (exisitingUser) {
+        return res.send('Email already in use');
+    }
+
+    if (password !== passwordConfirmation) {
+        return res.send('Passwords must match');
+    }
+
     res.send('Account created!');
 });
 

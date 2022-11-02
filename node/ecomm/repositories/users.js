@@ -50,15 +50,35 @@ class UsersRepository {
         return records.find(record => record.id === id);
     }
 
-    
+    async delete(id) {
+        const records = await this.getAll();
+        // filtered method returns true for records not equal to id passed in
+        const filteredRecords = records.filter(record => record.id !== id);
+        await this.writeAll(filteredRecords);
+    }
+
+    async update(id, attrs) {
+        const records = await this.getAll();
+        // iterate through all records and find the record that matches id passed in
+        const record = records.find(record => record.id === id);
+
+        // check to see if record has been found
+        if (!record) {
+            throw new Error(`Record with id ${id} not found!`);
+        }
+        // update record by adding all properties from attrs to it
+        Object.assign(record, attrs);
+        // write back all records with updates
+        await this.writeAll(records);
+    }
 }
 
 // test
 const test = async () => {
     const repo = new UsersRepository('users.json');
 
-    const user = await repo.getOne('11679b70');
-    console.log(user);
+    await repo.update("4c612106", {password: 'mypassword'});
+
 };
 
 test();

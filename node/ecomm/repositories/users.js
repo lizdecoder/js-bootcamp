@@ -33,6 +33,8 @@ class UsersRepository {
 
     async writeAll(records) {
         // write updated 'records' array back to 'users.jason'
+        // null = no customizer
+        // 2 = 2 spaces indentation
         await fs.promises.writeFile(this.filename, JSON.stringify(records, null, 2));
     } 
 }

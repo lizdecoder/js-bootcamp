@@ -71,13 +71,35 @@ class UsersRepository {
         // write back all records with updates
         await this.writeAll(records);
     }
+
+    async getOneBy(filters) {
+        const records = await this.getAll();
+        // for of loop = iterating through array
+        for (let record of records) {
+            let found = true;
+
+            // iterate through all key-value pairs of filters
+            // for in loop = iterating through an object
+            for (let key in filters) {
+                // if the value of the key in records does not equal the value of the key in filters, we did not find the record
+                if (record[key] !== filters[key]) {
+                    found = false;
+                }
+            }
+            // if found is till true, we found record
+            if (found) {
+                return record;
+            }
+        }
+    }
 }
 
 // test
 const test = async () => {
     const repo = new UsersRepository('users.json');
 
-    await repo.update("4c612106", {password: 'mypassword'});
+    const user = await repo.getOneBy({ hello: 'askdlfasl' });
+    console.log(user)
 
 };
 

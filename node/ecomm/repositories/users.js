@@ -56,6 +56,20 @@ class UsersRepository {
         return record;
     }
 
+    async comparePassword(saved, supplied) {
+        // saved - password saved in our database. 'hashed.salt'
+        // supplied - password given to us by user trying to sign in
+        // const result = saved.split('.');
+        // const hashed = result[0];
+        // const salt = result[1];
+        // single line for the three above ^
+        const [hashed, salt] = saved.split('.')
+        const hashedSupplied = await scrypt(supplied, salt, 64);
+
+        return hashed === hashedSupplied;
+
+    }
+
     async writeAll(records) {
         // write updated 'records' array back to 'users.jason'
         // null = no customizer

@@ -107,6 +107,21 @@ app.get('/signin', (req, res) => {
 
 // handle signin form submission
 app.post('/signin', async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await usersRepo.getOneBy({ email });
+    // if user not found
+    if (!user) {
+        return res.send('Email not found!');
+    }
+    // if password does not match user's password
+    if (user.password !== password) {
+        return res.send('Invalid password');
+    }
+    // passes both checks, means user is valid
+    // this user is authenticated by app
+    req.session.userId = user.id;
+    res.send('You are signed in!');
 
 });
 

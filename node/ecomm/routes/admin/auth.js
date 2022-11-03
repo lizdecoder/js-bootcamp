@@ -1,5 +1,11 @@
+const express = require('express');
+const usersRepo = require('../../repositories/users');
+
+// sub-router to support all route handlers
+const router = express.Router();
+
 // route handler: what app should do when it receives a network request
-app.get('/signup', (req, res) => {
+router.get('/signup', (req, res) => {
     res.send(`
         <div>
             Your id is: ${req.session.userId}
@@ -36,7 +42,7 @@ app.get('/signup', (req, res) => {
 // Attempt #3 to parse data
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
-app.post('/signup', async (req, res) => {
+router.post('/signup', async (req, res) => {
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
     // Attempt #1 to parse data
@@ -71,14 +77,14 @@ app.post('/signup', async (req, res) => {
     res.send('Account created!');
 });
 // signout functionality
-app.get('/signout', (req, res) => {
+router.get('/signout', (req, res) => {
     // needs to forget cookie data; clear out cookie data
     req.session = null;
     res.send('You are logged out');
 });
 
 // signin functionality
-app.get('/signin', (req, res) => {
+router.get('/signin', (req, res) => {
     res.send(`
         <div>
             <form method="POST">
@@ -91,7 +97,7 @@ app.get('/signin', (req, res) => {
 });
 
 // handle signin form submission
-app.post('/signin', async (req, res) => {
+router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
 
     const user = await usersRepo.getOneBy({ email });
@@ -109,5 +115,7 @@ app.post('/signin', async (req, res) => {
     // this user is authenticated by app
     req.session.userId = user.id;
     res.send('You are signed in!');
-
 });
+
+// export router to allow other files to use router
+module.exports = router;

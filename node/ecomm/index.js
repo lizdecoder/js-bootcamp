@@ -12,6 +12,7 @@ app.use(cookieSession({
     keys: ['dkfajsdflkadsjfklsdjfklasjdf']
 }));
 
+// uses router established in auth.js
 app.use(authRouter);
 
 // app to start listening to network requests on specific port; i.e. 3000

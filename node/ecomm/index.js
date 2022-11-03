@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const usersRepo = require('./repositories/users');
+const users = require('./repositories/users');
 
 const app = express();
 
@@ -114,8 +115,10 @@ app.post('/signin', async (req, res) => {
     if (!user) {
         return res.send('Email not found!');
     }
+    // compare password in databased to entered password
+    const validPassword = await usersRepo.comparePasswords(user.password, password);
     // if password does not match user's password
-    if (user.password !== password) {
+    if (!validPassword) {
         return res.send('Invalid password');
     }
     // passes both checks, means user is valid

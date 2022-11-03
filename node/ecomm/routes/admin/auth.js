@@ -1,4 +1,5 @@
 const express = require('express');
+const { check, validationResult } = require('express-validator');
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require ('../../views/admin/auth/signin');
@@ -34,7 +35,25 @@ router.get('/signup', (req, res) => {
 // Attempt #3 to parse data
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
-router.post('/signup', async (req, res) => {
+router.post('/signup', [
+    // always add santization before validators
+    check('email')
+        .trim()
+        .normalizeEmail()
+        .isEmail()
+        .withMessage('Must be a valid email'),
+    check('password')
+        .trim()
+        .isLength({ min: 4, max: 20 })
+        .withMessage('Must be between 4 and 20 characters'),
+    check('passwordConfirmation')
+        .trim()
+        .isLength({ min: 4, max: 20 })
+        .withMessage('Must be between 4 and 20 characters')
+], 
+async (req, res) => {
+    const errors = validationResult(req);
+    console.log(errors);
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
     // Attempt #1 to parse data
@@ -68,6 +87,7 @@ router.post('/signup', async (req, res) => {
 
     res.send('Account created!');
 });
+
 // signout functionality
 router.get('/signout', (req, res) => {
     // needs to forget cookie data; clear out cookie data

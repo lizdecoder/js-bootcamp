@@ -9,13 +9,15 @@ const app = express();
 // applies middleware function to all route handlers
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
+    // used to encrypt data
     keys: ['dkfajsdflkadsjfklsdjfklasjdf']
 }));
 
 // route handler: what app should do when it receives a network request
-app.get('/', (req, res) => {
+app.get('/signup', (req, res) => {
     res.send(`
         <div>
+            Your id is: ${req.session.userId}
             <form method="POST">
                 <input name="email" placeholder="email" />
                 <input name="password" placeholder="password" />
@@ -49,7 +51,7 @@ app.get('/', (req, res) => {
 // Attempt #3 to parse data
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
-app.post('/', async (req, res) => {
+app.post('/signup', async (req, res) => {
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
     // Attempt #1 to parse data
@@ -78,9 +80,34 @@ app.post('/', async (req, res) => {
     const user = await usersRepo.create({ email, password });
     // store ID of that user inside the users cookie
     // installed third party package to manage users cookie
-    
+    // req.session === {}//added by cookie session library!
+    req.session.userId = user.id;
 
     res.send('Account created!');
+});
+// signout functionality
+app.get('/signout', (req, res) => {
+    // needs to forget cookie data; clear out cookie data
+    req.session = null;
+    res.send('You are logged out');
+});
+
+// signin functionality
+app.get('/signin', (req, res) => {
+    res.send(`
+        <div>
+            <form method="POST">
+                <input name="email" placeholder="email" />
+                <input name="password" placeholder="password" />
+                <button>Sign In</button>
+            </form>
+        </div>
+    `)
+});
+
+// handle signin form submission
+app.post('/signin', async (req, res) => {
+
 });
 
 // app to start listening to network requests on specific port; i.e. 3000

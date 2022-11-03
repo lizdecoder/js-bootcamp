@@ -1,12 +1,16 @@
 const { application } = require('express');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
 const usersRepo = require('./repositories/users');
 
 const app = express();
 
 // applies middleware function to all route handlers
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieSession({
+    keys: ['dkfajsdflkadsjfklsdjfklasjdf']
+}));
 
 // route handler: what app should do when it receives a network request
 app.get('/', (req, res) => {
@@ -69,6 +73,12 @@ app.post('/', async (req, res) => {
     if (password !== passwordConfirmation) {
         return res.send('Passwords must match');
     }
+
+    // create user in our user repo to represent this person
+    const user = await usersRepo.create({ email, password });
+    // store ID of that user inside the users cookie
+    // installed third party package to manage users cookie
+    
 
     res.send('Account created!');
 });

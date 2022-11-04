@@ -46,6 +46,7 @@ router.get('/signup', (req, res) => {
 router.post('/signup', [requireEmail, requirePassword,requirePasswordConfirmation], 
 async (req, res) => {
     const errors = validationResult(req);
+    // console.log(errors) --> only need for testing purposes
     if (!errors.isEmpty()) {
         return res.send(signupTemplate({ req, errors }));
     }

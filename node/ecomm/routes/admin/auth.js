@@ -4,7 +4,13 @@ const { check, validationResult } = require('express-validator');
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require ('../../views/admin/auth/signin');
-const { requireEmail, requirePassword, requirePasswordConfirmation } = require('./validators');
+const { 
+    requireEmail, 
+    requirePassword, 
+    requirePasswordConfirmation, 
+    requireEmailExists, 
+    requireValidPasswordForUser 
+} = require('./validators');
 
 // sub-router to support all route handlers
 const router = express.Router();
@@ -77,24 +83,26 @@ router.get('/signout', (req, res) => {
 
 // signin functionality
 router.get('/signin', (req, res) => {
-    res.send(signinTemplate());
+    // pass in empty object because template expects an errors object
+    res.send(signinTemplate({}));
 });
 
 // handle signin form submission
-router.post('/signin', async (req, res) => {
-    const { email, password } = req.body;
+router.post('/signin', [requireEmailExists, requireValidPasswordForUser], 
+async (req, res) => {
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        return res.send(signinTemplate({ errors }));
+    }
+    // if (!errors.isEmpty()) {
+    //     return res.send(signupTemplate({ req, errors }));
+    // }
+
+    const { email } = req.body;
 
     const user = await usersRepo.getOneBy({ email });
-    // if user not found
-    if (!user) {
-        return res.send('Email not found!');
-    }
-    // compare password in databased to entered password
-    const validPassword = await usersRepo.comparePasswords(user.password, password);
-    // if password does not match user's password
-    if (!validPassword) {
-        return res.send('Invalid password');
-    }
+    
     // passes both checks, means user is valid
     // this user is authenticated by app
     req.session.userId = user.id;

@@ -37,14 +37,12 @@ router.get('/signup', (req, res) => {
 // Attempt #3 to parse data
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
-router.post('/signup', [
-    requireEmail,
-    requirePassword,
-    requirePasswordConfirmation
-], 
+router.post('/signup', [requireEmail, requirePassword,requirePasswordConfirmation], 
 async (req, res) => {
     const errors = validationResult(req);
-    console.log(errors);
+    if (!errors.isEmpty()) {
+        return res.send(signupTemplate({ req, errors }));
+    }
     //get access to email, password, passwordConfirmation
     // req.on is equal to addEventListener
     // Attempt #1 to parse data

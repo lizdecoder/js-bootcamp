@@ -1,8 +1,10 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
+
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require ('../../views/admin/auth/signin');
+const { requireEmail, requirePassword, requirePasswordConfirmation } = require('./validators');
 
 // sub-router to support all route handlers
 const router = express.Router();
@@ -36,31 +38,9 @@ router.get('/signup', (req, res) => {
 // uses outside library for middleware function bodyParser.urlencoded()
 // route handlers
 router.post('/signup', [
-    // always add santization before validators
-    check('email')
-        .trim()
-        .normalizeEmail()
-        .isEmail()
-        .withMessage('Must be a valid email')
-        .custom(async (email) => {
-            const exisitingUser = await usersRepo.getOneBy({ email });
-            if (exisitingUser) {
-                throw new Error('Email is already in use.');
-            }
-        }),
-    check('password')
-        .trim()
-        .isLength({ min: 4, max: 20 })
-        .withMessage('Must be between 4 and 20 characters'),
-    check('passwordConfirmation')
-        .trim()
-        .isLength({ min: 4, max: 20 })
-        .withMessage('Must be between 4 and 20 characters')
-        .custom((passwordConfirmation, { req }) => {
-            if (passwordConfirmation !== req.body.password) {
-                throw new Error('Passwords must match.');
-            }
-        }),
+    requireEmail,
+    requirePassword,
+    requirePasswordConfirmation
 ], 
 async (req, res) => {
     const errors = validationResult(req);

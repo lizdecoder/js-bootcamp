@@ -5,6 +5,8 @@ const authRouter = require('./routes/admin/auth');
 
 const app = express();
 
+// looking inside public folder and feed to browser
+app.use(express.static('public'));
 // applies middleware function to all route handlers
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({

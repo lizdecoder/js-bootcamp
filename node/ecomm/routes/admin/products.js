@@ -19,7 +19,8 @@ router.get('/admin/products/new', (req, res) => {
 // route to submit form
 router.post('/admin/products/new', [requireTitle, requirePrice], (req, res) => {
     const errors = validationResult(req);
-    console.log(errors)
+    // console.log(errors)
+    console.log(req.body);
     res.send('submitted');
 });
 // route to allow admin to edit

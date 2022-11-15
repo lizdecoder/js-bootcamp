@@ -1,7 +1,7 @@
 const express = require('express');
-const { validationResult } = require('express-validator');
 const multer = require('multer');
 
+const { handleErrors } = require('./middlewares');
 const productsRepo = require('../../repositories/products');
 const productsNewTemplate = require('../../views/admin/products/new');
 const {requireTitle, requirePrice } = require('./validators');
@@ -11,7 +11,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // route for list all products
 router.get('/admin/products', (req, res) => {
-
+    
 });
 
 // route to show a form to allow admin to create a new product
@@ -20,11 +20,8 @@ router.get('/admin/products/new', (req, res) => {
 });
 
 // route to submit form
-router.post('/admin/products/new', upload.single('image'), [requireTitle, requirePrice], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.send(productsNewTemplate({ errors }));
-    }
+router.post('/admin/products/new', upload.single('image'), [requireTitle, requirePrice], handleErrors(productsNewTemplate), async (req, res) => {
+    
     // console.log(errors)
     // console.log(req.file.buffer.toString('base64'));
     const image = req.file.buffer.toString('base64');

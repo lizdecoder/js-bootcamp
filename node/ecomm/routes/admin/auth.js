@@ -67,7 +67,7 @@ async (req, res) => {
     // req.session === {}//added by cookie session library!
     req.session.userId = user.id;
 
-    res.send('Account created!');
+    res.redirect('/admin/products');
 });
 
 // signout functionality
@@ -97,7 +97,7 @@ handleErrors(signinTemplate), async (req, res) => {
     // passes both checks, means user is valid
     // this user is authenticated by app
     req.session.userId = user.id;
-    res.send('You are signed in!');
+    res.redirect('/admin/products');
 });
 
 // export router to allow other files to use router

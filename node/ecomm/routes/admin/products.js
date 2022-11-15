@@ -4,14 +4,16 @@ const multer = require('multer');
 const { handleErrors } = require('./middlewares');
 const productsRepo = require('../../repositories/products');
 const productsNewTemplate = require('../../views/admin/products/new');
+const productsIndexTemplate = require('../../views/admin/products/index')
 const {requireTitle, requirePrice } = require('./validators');
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // route for list all products
-router.get('/admin/products', (req, res) => {
-    
+router.get('/admin/products', async (req, res) => {
+    const products = await productsRepo.getAll();
+    res.send(productsIndexTemplate({ products }));
 });
 
 // route to show a form to allow admin to create a new product
@@ -28,7 +30,7 @@ router.post('/admin/products/new', upload.single('image'), [requireTitle, requir
     const { title, price } = req.body;
     await productsRepo.create({ title, price, image });
 
-    res.send('submitted');
+    res.redirect('/admin/products');
 });
 // route to allow admin to edit
 // route submitting editing form
